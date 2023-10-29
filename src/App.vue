@@ -1,5 +1,11 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterView } from 'vue-router'
+import { storeToRefs } from 'pinia';
+import { useAuthStore } from './stores/auth';
+
+const auth = useAuthStore();
+const { isAuth } = storeToRefs(auth);
+
 </script>
 
 <template>
@@ -12,12 +18,22 @@ import { RouterLink, RouterView } from 'vue-router'
           </v-btn>
         </template>
         <v-spacer></v-spacer>
-        <v-btn prepend-icon="mdi-home" :to="{ name: 'home' }">
-          Inicio
-        </v-btn>
-        <v-btn prepend-icon="mdi-login" :to="{ name: 'login' }">
-          Iniciar Sesión
-        </v-btn>
+        <div v-if="isAuth">
+          <v-btn prepend-icon="mdi-account" :to="{ name: 'admin-properties' }">
+            Admin
+          </v-btn>
+          <v-btn prepend-icon="mdi-logout" @click="auth.logout">
+            Cerrar Sesión
+          </v-btn>
+        </div>
+        <div v-else>
+          <v-btn prepend-icon="mdi-home" :to="{ name: 'home' }">
+            Inicio
+          </v-btn>
+          <v-btn prepend-icon="mdi-login" :to="{ name: 'login' }">
+            Iniciar Sesión
+          </v-btn>
+        </div>
       </v-app-bar>
       <v-main>
         <v-container>
