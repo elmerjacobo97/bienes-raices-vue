@@ -19,7 +19,7 @@ const onSubmit = handleSubmit(values => {
 </script>
 
 <template>
-  <v-card max-width="600" class="mx-auto" color="grey-lighten-3" flat>
+  <v-card color="grey-lighten-3" flat>
     <v-card-title class="text-h4 text-center font-weight-bold">
       Iniciar Sesión
     </v-card-title>
