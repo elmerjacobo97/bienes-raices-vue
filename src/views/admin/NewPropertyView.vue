@@ -1,10 +1,14 @@
 <script setup>
+import { ref } from 'vue';
 import { useForm, useField } from 'vee-validate';
 import { collection, addDoc } from 'firebase/firestore';
 import { useFirestore } from 'vuefire';
 import { useRouter } from 'vue-router';
 import { validationSchema, imageSchema } from '@/validations/propertiesSchema';
 import useImage from '../../composables/useImage';
+import { LMap, LTileLayer, LMarker } from "@vue-leaflet/vue-leaflet";
+import "leaflet/dist/leaflet.css";
+import useLocationMap from '../../composables/useLocationMap';
 
 const { handleSubmit } = useForm({
   validationSchema: {
@@ -13,9 +17,11 @@ const { handleSubmit } = useForm({
   }
 });
 
+
 const db = useFirestore();
 const router = useRouter();
-const { uploadImage } = useImage();
+const { url, uploadImage, image: imageValue } = useImage();
+const { zoom, center, pin } = useLocationMap();
 
 const title = useField('title');
 const image = useField('image');
@@ -30,6 +36,8 @@ const submit = handleSubmit(async (values) => {
   const { image, ...property } = values;
   const dicRef = await addDoc(collection(db, 'properties'), {
     ...property,
+    image: url.value,
+    location: center.value,
   });
 
   if (dicRef.id) {
@@ -58,9 +66,13 @@ const items = [1, 2, 3, 4, 5];
       <v-file-input class="mb-3" label="Imagen" accept="image/jpeg, image/png, image/jpg, image/webp, image/gif"
         prepend-icon="mdi-camera" variant="outlined" v-model="image.value.value"
         :error-messages="image.errorMessage.value" @change="uploadImage" />
+      <div v-if="imageValue">
+        <p class="mb-3 text-center font-weight-bold">Imagen propiedad</p>
+        <v-img class="mb-3 mx-auto" :src="imageValue" max-height="300" max-width="300" alt="Imagen propiedad" />
+      </div>
       <v-text-field class="mb-3" label="Precio" prepend-icon="mdi-currency-usd" type="text" variant="outlined"
         v-model="price.value.value" :error-messages="price.errorMessage.value" />
-      <v-row>
+      <v-row class="mb-3">
         <v-col cols="12" md="6">
           <v-select label="Habitaciones" :items="items" prepend-icon="mdi-bed" variant="outlined"
             v-model="bedrooms.value.value" :error-messages="bedrooms.errorMessage.value" />
@@ -75,6 +87,16 @@ const items = [1, 2, 3, 4, 5];
       <v-textarea label="Descripción" prepend-icon="mdi-text" variant="outlined" v-model="description.value.value"
         :error-messages="description.errorMessage.value" />
       <v-checkbox label="Alberca" prepend-icon="mdi-pool" variant="outlined" v-model="swimmingPool.value.value" />
+      <h2 class="text-center my-5 font-weight-bold">Ubicación</h2>
+      <div class="mb-5">
+        <div style="height:600px;">
+          <LMap ref="map" v-model:zoom="zoom" :center="center" :use-global-leaflet="false">
+            <LMarker :lat-lng="center" :draggable="true" @moveend="pin" />
+            <LTileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" layer-type="base" name="OpenStreetMap">
+            </LTileLayer>
+          </LMap>
+        </div>
+      </div>
       <v-btn color="pink-darken-1" block prepend-icon="mdi-content-save" @click="submit">Agregar
         propiedad</v-btn>
     </v-form>

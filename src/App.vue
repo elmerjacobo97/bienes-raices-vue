@@ -9,7 +9,7 @@ const { isAuth } = storeToRefs(auth);
 </script>
 
 <template>
-  <v-card max-width="448" class="mx-auto" color="grey-lighten-3">
+  <v-card max-width="1280" class="mx-auto" color="grey-lighten-3">
     <v-layout>
       <v-app-bar color="indigo-darken-4">
         <template v-slot:prepend>
