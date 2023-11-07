@@ -12,6 +12,11 @@ const router = createRouter({
       component: HomeView,
     },
     {
+      path: '/property/:id',
+      name: 'property',
+      component: () => import('../views/PropertyView.vue'),
+    },
+    {
       path: '/login',
       name: 'login',
       component: () => import('../views/LoginView.vue'),
@@ -26,17 +31,17 @@ const router = createRouter({
       },
       children: [
         {
-          path: '/admin/properties',
+          path: 'properties', // /admin/properties
           name: 'admin-properties',
           component: () => import('../views/admin/AdminView.vue'),
         },
         {
-          path: '/admin/new-property',
+          path: 'new-property',
           name: 'admin-new-property',
           component: () => import('../views/admin/NewPropertyView.vue'),
         },
         {
-          path: '/admin/edit-property/:id',
+          path: 'edit-property/:id',
           name: 'admin-edit-property',
           component: () => import('../views/admin/EditPropertyView.vue'),
         },

@@ -1,7 +1,8 @@
 <script setup>
 import useProperties from '../../composables/useProperties';
+import { formatPrice } from '@/helpers';
 
-const { propertiesCollection, formatPrice } = useProperties();
+const { propertiesCollection, deleteItem } = useProperties();
 
 </script>
 
@@ -24,7 +25,7 @@ const { propertiesCollection, formatPrice } = useProperties();
             :to="{ name: 'admin-edit-property', params: { id: property.id } }">
             Editar
           </v-btn>
-          <v-btn color="red-darken-1" prepend-icon="mdi-delete" variant="text">
+          <v-btn color="red-darken-1" prepend-icon="mdi-delete" variant="text" @click="deleteItem(property.id, property.image)">
             Eliminar
           </v-btn>
         </template>

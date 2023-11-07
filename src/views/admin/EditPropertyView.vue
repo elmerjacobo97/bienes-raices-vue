@@ -1,7 +1,7 @@
 <script setup>
-import { doc } from "firebase/firestore";
+import { doc, updateDoc } from "firebase/firestore";
 import { watch } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useDocument, useFirestore } from "vuefire";
 import useImage from "../../composables/useImage";
 import useLocationMap from "../../composables/useLocationMap";
@@ -10,6 +10,7 @@ import { validationSchema } from "@/validations/propertiesSchema";
 import { LMap, LMarker, LTileLayer } from "@vue-leaflet/vue-leaflet";
 
 const route = useRoute();
+const router = useRouter();
 
 const items = [1, 2, 3, 4, 5];
 
@@ -43,9 +44,25 @@ watch(property, (property) => {
   center.value = property.location
 });
 
-const submit = handleSubmit((values) => {
-  console.log("values", values);
+const submit = handleSubmit(async (values) => {
+  const { image, ...property } = values;
+
+  // Crear el objeto base de 'data' con todo excepto 'image'.
+  let data = {
+    ...property,
+    location: center.value
+  };
+
+  if (imageValue.value) {
+    data.image = url.value;
+  }
+
+  await updateDoc(docRef, data);
+
+  // Redireccionar al usuario.
+  router.push({ name: "admin-properties" });
 });
+
 </script>
 
 <template>
